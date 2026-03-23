@@ -86,7 +86,6 @@ jobs:
             -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
             -var="region=${{ env.GCP_REGION }}" \
             -var="image=${{ env.IMAGE }}:${{ steps.version.outputs.version }}" \
-            -var="service_name=${{ env.CLOUDRUN_SERVICE }}" \
             -out=tfplan
 
       - name: Terraform Apply
