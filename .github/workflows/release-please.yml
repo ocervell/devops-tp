@@ -28,3 +28,5 @@ jobs:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           # Le fichier où release-please lit/écrit la version
           version-file: app/version.py
+          extra-files: |
+            app/version.py
