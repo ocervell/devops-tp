@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/ocervell/devops-tp/compare/v0.2.1...v0.2.2) (2026-03-23)
+
+
+### Bug Fixes
+
+* update release please rights ([7d3b73e](https://github.com/ocervell/devops-tp/commit/7d3b73e9a822a41558b8e9ae97806367071d5c19))
+
 ## [0.2.1](https://github.com/ocervell/devops-tp/compare/v0.2.0...v0.2.1) (2026-03-23)
 
 
