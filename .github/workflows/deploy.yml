@@ -1,0 +1,99 @@
+# .github/workflows/deploy.yml
+name: Deploy
+
+on:
+  # Se déclenche uniquement quand le build sur un tag v* est terminé
+  workflow_run:
+    workflows: ["Build"]
+    types:
+      - completed
+  # Permet de déclencher manuellement
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version à déployer (ex: 1.0.0)"
+        required: true
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GCP_REGION: europe-west1
+  CLOUDRUN_SERVICE: helloworld
+  IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/helloworld/helloworld
+
+jobs:
+  deploy:
+    name: Deploy via Terraform
+    runs-on: ubuntu-latest
+
+    # Ne déployer que si :
+    # - le workflow_run vient d'un tag v* ET s'est terminé avec succès
+    # - OU si c'est un déclenchement manuel
+    if: |
+      (
+        github.event_name == 'workflow_run' &&
+        github.event.workflow_run.conclusion == 'success' &&
+        startsWith(github.event.workflow_run.head_branch, 'v')
+      ) ||
+      github.event_name == 'workflow_dispatch'
+
+    environment:
+      name: production
+      url: ${{ steps.get-url.outputs.url }}
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      # Extraire la version depuis le tag qui a déclenché le build
+      - name: Extraire la version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            # Récupère le tag depuis le workflow_run (ex: v1.2.0 → 1.2.0)
+            TAG="${{ github.event.workflow_run.head_branch }}"
+            echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Authentification GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}" \
+            -backend-config="prefix=helloworld/state"
+
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="region=${{ env.GCP_REGION }}" \
+            -var="image=${{ env.IMAGE }}:${{ steps.version.outputs.version }}" \
+            -var="service_name=${{ env.CLOUDRUN_SERVICE }}" \
+            -out=tfplan
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve tfplan
+
+      - name: Récupérer l'URL du service
+        id: get-url
+        run: |
+          URL=$(terraform output -raw cloud_run_url)
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Afficher l'URL
+        run: echo "🚀 Application disponible sur ${{ steps.get-url.outputs.url }}"

@@ -1,0 +1,62 @@
+# .github/workflows/build.yml
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - "release-please--**"
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version à déployer (ex: 1.0.0)"
+        required: true
+        default: "1.0.0"
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  IMAGE: europe-west1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/helloworld/helloworld
+
+jobs:
+  build:
+    name: Build & Push via Cloud Build
+    runs-on: ubuntu-latest
+
+    outputs:
+      image_tag: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout du code
+        uses: actions/checkout@v4
+
+      - name: Extraire la version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            # Tag → version sans le "v" (ex: v1.2.0 → 1.2.0)
+            echo "version=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+          else
+            # Branche → short SHA du commit
+            echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Authentification GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup gcloud
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Build via Cloud Build
+        run: |
+          gcloud builds submit . \
+            --config=cloudbuild.yaml \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --substitutions=_TAG=${{ steps.version.outputs.version }}
