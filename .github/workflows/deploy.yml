@@ -47,6 +47,9 @@ jobs:
     steps:
       - name: Checkout du code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       # Extraire la version depuis le tag qui a déclenché le build
       - name: Extraire la version
