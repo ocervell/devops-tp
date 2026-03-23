@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4](https://github.com/ocervell/devops-tp/compare/v0.2.3...v0.2.4) (2026-03-23)
+
+
+### Bug Fixes
+
+* app version ([1a18e11](https://github.com/ocervell/devops-tp/commit/1a18e11101605b902c8255789d51653d75829abd))
+* update version in version.py ([b8d3e12](https://github.com/ocervell/devops-tp/commit/b8d3e12a40ea5dd92a2dc7b5d0898733776728cd))
+
 ## [0.2.3](https://github.com/ocervell/devops-tp/compare/v0.2.2...v0.2.3) (2026-03-23)
 
 
