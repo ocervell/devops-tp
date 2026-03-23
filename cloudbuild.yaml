@@ -27,3 +27,6 @@ images:
   - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:latest'
 # Timeout for the entire build
 timeout: '1200s'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
