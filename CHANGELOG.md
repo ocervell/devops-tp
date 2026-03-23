@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/ocervell/devops-tp/compare/v0.1.0...v0.2.0) (2026-03-23)
+
+
+### Features
+
+* migrate Terraform state ([e2bc0d3](https://github.com/ocervell/devops-tp/commit/e2bc0d324a10bc7ca1547c6761f9c884d0a028f2))
+
 ## 0.1.0 (2026-03-23)
 
 
