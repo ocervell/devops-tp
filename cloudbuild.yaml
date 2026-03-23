@@ -1,0 +1,42 @@
+# cloudbuild.yaml
+steps:
+  # Step 1 -- Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:$SHORT_SHA'
+      - '-t'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:latest'
+      - '.'
+
+  # Step 2 -- Push the image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:$SHORT_SHA'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:latest'
+
+  # Step 3 -- Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'helloworld'
+      - '--image=europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:$SHORT_SHA'
+      - '--region=europe-west1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--port=8080'
+
+# Image pushed to Artifact Registry
+images:
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:$SHORT_SHA'
+  - 'europe-west1-docker.pkg.dev/$PROJECT_ID/helloworld/helloworld:latest'
+# Timeout for the entire build
+timeout: '1200s'
