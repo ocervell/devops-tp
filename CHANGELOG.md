@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1](https://github.com/ocervell/devops-tp/compare/v0.2.0...v0.2.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* deploy tags checkout ([249207b](https://github.com/ocervell/devops-tp/commit/249207bf93d948636912e8b7a45ae2365c5dc9dd))
+* remove build on main branch ([64896df](https://github.com/ocervell/devops-tp/commit/64896dfc100b0e18b1f4d9615da8f46a6cd27cb2))
+
 ## [0.2.0](https://github.com/ocervell/devops-tp/compare/v0.1.0...v0.2.0) (2026-03-23)
 
 
