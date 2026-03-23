@@ -25,5 +25,6 @@ jobs:
         with:
           # Type de projet : "python" pour analyser les fichiers Python
           release-type: python
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
           # Le fichier où release-please lit/écrit la version
           version-file: app/version.py
