@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/ocervell/devops-tp/compare/v0.2.2...v0.2.3) (2026-03-23)
+
+
+### Bug Fixes
+
+* remove service_name from deployment ([05a29ef](https://github.com/ocervell/devops-tp/commit/05a29ef6d4d6f41327bcea016d158d2cca331dfc))
+
 ## [0.2.2](https://github.com/ocervell/devops-tp/compare/v0.2.1...v0.2.2) (2026-03-23)
 
 
