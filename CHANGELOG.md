@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/ocervell/devops-tp/compare/v0.2.4...v0.2.5) (2026-03-24)
+
+
+### Bug Fixes
+
+* service url ([fa63a1c](https://github.com/ocervell/devops-tp/commit/fa63a1cf35ad64a9601bb01e6acb1dec87cfb0a0))
+
 ## [0.2.4](https://github.com/ocervell/devops-tp/compare/v0.2.3...v0.2.4) (2026-03-23)
 
 
